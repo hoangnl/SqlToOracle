@@ -16,6 +16,7 @@ namespace SqlToOracle.Core.Common
 
     public class ChangeType
     {
+        public const string SELECTED = "S";
         public const string INSERTED = "I";
         public const string UPDATED = "U";
         public const string DELETED = "D";

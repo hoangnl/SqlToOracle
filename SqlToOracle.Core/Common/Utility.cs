@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using Oracle.DataAccess.Client;
+using System.Text;
 
 namespace SqlToOracle.Core.Common
 {
@@ -43,19 +44,16 @@ namespace SqlToOracle.Core.Common
         public static string ConvertToSafeString(this string input)
         {
             var result = input.Replace("'", "''");
-            if (input.Length > 4000)
-            {
-                //result = String.Format("TO_CLOB('{0}')", result);
-                result = input.Substring(0, 4000);
-            }
-            else
-            {
-                result = String.Format("'{0}'", result);
-            }
+            //if (result.Length > 4000)
+            //{
+            //    //result = String.Format("TO_CLOB('{0}')", result);
+            //    result = result.Substring(0, 4000);
+            //}
+            result = String.Format("'{0}'", result);
             return result;
         }
 
-        public static string ConvertToStandardColumnName(this string input)
+        public static string ConvertToStandardName(this string input)
         {
             if (input.Length > 30)
             {
@@ -65,7 +63,15 @@ namespace SqlToOracle.Core.Common
             {
                 input = "comment_";
             }
-            return input;
+            return input.ToUpper();
+        }
+
+        public static string ConvertByteArrayToString(byte[] ba)
+        {
+            StringBuilder hex = new StringBuilder(ba.Length * 2);
+            foreach (byte b in ba)
+                hex.AppendFormat("{0:x2}", b);
+            return hex.ToString();
         }
     }
 }

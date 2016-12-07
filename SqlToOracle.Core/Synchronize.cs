@@ -64,13 +64,15 @@ namespace SqlToOracle.Core
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(String.Format("Error sync with logId: {0}", ex));
+                    Logger.Error(String.Format("Error sync with logId {0}: {1}", item.Key, ex));
                     _sourceAccess.ExcuteRawNonQuery(String.Format(updateLogCommand, (int)Status.ERROR, item.Key));
                 }
             }
         }
 
-        public void Run(string tableName, string primaryKeyField, bool isTruncated = true)
+        public void Run(string tableName,
+                        string primaryKeyField,
+                        bool isTruncated = true)
         {
             if (isTruncated)
             {
@@ -115,12 +117,11 @@ namespace SqlToOracle.Core
         }
 
 
-        public void Run(string tableName, 
-                        string primaryKeyField, 
-                        string createdDateColumn, 
-                        string startDate, 
+        public void Run(string tableName,
+                        string primaryKeyField,
+                        string createdDateColumn,
+                        string startDate,
                         string endDate)
-
         {
             var selectCommand = String.Format("SELECT COUNT(1) Total FROM {0} WHERE {1} >= '{2}' AND {1} < '{3}'", tableName, createdDateColumn, startDate, endDate);
             var total = _sourceAccess.ExcuteRawQuery(selectCommand) as DataTable;
@@ -191,15 +192,15 @@ namespace SqlToOracle.Core
             var dict = new Dictionary<String, List<String>>();
             for (int index = 1; index <= pageNumber; index++)
             {
-               var pagingCommand = String.Format(command,
-                parentTableName,
-                parentPrimaryKeyField,
-                childTableName,
-                childPrimaryKeyField,
-                createdDateColumn,
-                startDate,
-                endDate,
-                "{1}, k = ROW_NUMBER() OVER (ORDER BY {1})");
+                var pagingCommand = String.Format(command,
+                 parentTableName,
+                 parentPrimaryKeyField,
+                 childTableName,
+                 childPrimaryKeyField,
+                 createdDateColumn,
+                 startDate,
+                 endDate,
+                 "{1}, k = ROW_NUMBER() OVER (ORDER BY {1})");
                 var selectQuery = String.Format(@";WITH x AS (" + pagingCommand + @")
                                                     SELECT e.*
                                                     FROM x INNER JOIN {0} AS e
@@ -230,7 +231,9 @@ namespace SqlToOracle.Core
             }
         }
 
-        public void Run(string source, string tableName, string primaryKeyField)
+        public void Run(string source,
+                        string tableName,
+                        string primaryKeyField)
         {
             var determine = new char[] { ',' };
             var primaryKeyValues = source.Split(determine, StringSplitOptions.RemoveEmptyEntries);
